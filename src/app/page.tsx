@@ -241,7 +241,7 @@ export default function FuturisticFreelancer() {
                 {t.hero.title}
               </span>
               <br />
-              <span className="text-white">& {t.hero.subtitle}</span>
+              <span className="text-white">{t.hero.subtitle}</span>
             </motion.h1>
             
             <motion.p
