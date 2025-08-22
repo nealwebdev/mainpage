@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,13 +35,19 @@ import { contactFormSchema, type ContactFormData } from "@/lib/validation";
 
 // --- Main Page ---
 export default function FuturisticFreelancer() {
-  const refs = {
-    home: useRef<HTMLElement>(null),
-    work: useRef<HTMLElement>(null),
-    services: useRef<HTMLElement>(null),
-    about: useRef<HTMLElement>(null),
-    contact: useRef<HTMLElement>(null),
-  };
+  const homeRef = useRef<HTMLElement>(null);
+  const workRef = useRef<HTMLElement>(null);
+  const servicesRef = useRef<HTMLElement>(null);
+  const aboutRef = useRef<HTMLElement>(null);
+  const contactRef = useRef<HTMLElement>(null);
+  
+  const refs = useMemo(() => ({
+    home: homeRef,
+    work: workRef,
+    services: servicesRef,
+    about: aboutRef,
+    contact: contactRef,
+  }), []);
   
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<any>(null);
@@ -75,7 +81,7 @@ export default function FuturisticFreelancer() {
 
       if (response.ok) {
         setFormStatus('success');
-        setFormMessage('Message sent successfully! I\'ll get back to you soon.');
+        setFormMessage('Message sent successfully! I&apos;ll get back to you soon.');
         reset();
       } else {
         setFormStatus('error');
@@ -237,7 +243,7 @@ export default function FuturisticFreelancer() {
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
               className="text-lg sm:text-xl opacity-90 mb-8 max-w-2xl mx-auto leading-relaxed"
             >
-              I'm a versatile IT professional specializing in web development, with expertise in modern technologies 
+              I&apos;m a versatile IT professional specializing in web development, with expertise in modern technologies 
               and AI integration. From custom applications to enterprise solutions, I deliver comprehensive IT services.
             </motion.p>
             
@@ -574,7 +580,7 @@ export default function FuturisticFreelancer() {
               className={`rounded-2xl p-8 ${gradients.card}`}
             >
               <p className="opacity-90 leading-relaxed text-lg mb-8">
-                I'm a versatile IT professional with expertise in creating robust, scalable web solutions 
+                I&apos;m a versatile IT professional with expertise in creating robust, scalable web solutions 
                 that integrate seamlessly with modern technologies and AI. I focus on building intelligent 
                 digital ecosystems that automate processes and enhance user experiences across various platforms.
               </p>
@@ -619,12 +625,12 @@ export default function FuturisticFreelancer() {
             >
               <h2 className="text-4xl sm:text-5xl font-bold mb-4">
                 <span className="bg-gradient-to-r from-purple-300 via-pink-300 to-cyan-300 bg-clip-text text-transparent">
-                  Let's Build Together
+                  Let&apos;s Build Together
                 </span>
               </h2>
               <p className="text-lg opacity-80 max-w-2xl mx-auto">
-                Ready to bring your digital vision to life? I'm here to help you create 
-                something extraordinary. Let's discuss your project and make it happen.
+                Ready to bring your digital vision to life? I&apos;m here to help you create 
+                something extraordinary. Let&apos;s discuss your project and make it happen.
               </p>
             </motion.div>
             

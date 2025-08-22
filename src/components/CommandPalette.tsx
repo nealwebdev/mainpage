@@ -110,7 +110,7 @@ export function CommandPalette({ open, setOpen, items, onSelect }: CommandPalett
                 ))
               ) : (
                 <div className="px-4 py-6 text-sm opacity-70 text-center">
-                  <div className="mb-2">No matches found for "{query}"</div>
+                  <div className="mb-2">No matches found for &quot;{query}&quot;</div>
                   <div className="text-xs opacity-60">Try: Home, Work, Services, About, Contact</div>
                 </div>
               )}
