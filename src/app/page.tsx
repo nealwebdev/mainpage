@@ -147,28 +147,30 @@ export default function FuturisticFreelancer() {
 
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-40">
-        <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="mx-auto max-w-6xl px-3 sm:px-5 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div className="relative">
               <div className="absolute inset-0 blur-xl bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-60" />
-              <div className="relative grid place-items-center size-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-300/30">
-                <Rocket size={18} className="text-purple-300" />
+              <div className="relative grid place-items-center size-8 sm:size-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-300/30">
+                <Rocket size={16} className="text-purple-300 sm:w-[18px] sm:h-[18px]" />
               </div>
             </div>
             <div>
-              <div className="font-bold tracking-wide text-lg bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+              <div className="font-bold tracking-wide text-base sm:text-lg bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
                 Neal Focke
               </div>
-              <div className="text-xs opacity-80 -mt-0.5">Full-Stack IT Solutions Developer</div>
+              <div className="text-xs opacity-80 -mt-0.5 hidden xs:block">Full-Stack IT Solutions Developer</div>
+              <div className="text-xs opacity-80 -mt-0.5 xs:hidden">Full-Stack Developer</div>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs opacity-90">
             <button
               onClick={() => setPaletteOpen(true)}
-              className={`inline-flex items-center gap-2 rounded-xl border border-purple-300/30 bg-purple-500/20 px-3 py-2 text-sm hover:bg-purple-500/30 transition-all duration-200 hover:scale-105 ${paletteOpen ? "bg-purple-500/30" : ""}`}
+              className={`inline-flex items-center justify-center gap-1 sm:gap-2 rounded-xl border border-purple-300/30 bg-purple-500/20 px-2 sm:px-3 py-2 text-xs sm:text-sm hover:bg-purple-500/30 transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation ${paletteOpen ? "bg-purple-500/30" : ""}`}
             >
-              <Search size={14}/>
+              <Search size={12} className="sm:w-[14px] sm:h-[14px]"/>
               <span className="hidden sm:inline">Quick Search</span>
+              <span className="sm:hidden">Search</span>
               <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-white/10 px-1.5 font-mono text-[10px] font-medium opacity-100">
                 <span className="text-xs">⌘</span>K
               </kbd>
@@ -188,9 +190,9 @@ export default function FuturisticFreelancer() {
       {/* Main content */}
       <main className="snap-y snap-mandatory overflow-y-auto h-screen">
         {/* Home */}
-        <section ref={refs.home} id="home" className="snap-start min-h-screen grid place-items-center px-6 relative">
-          {/* Floating elements */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <section ref={refs.home} id="home" className="snap-start min-h-screen grid place-items-center px-4 sm:px-6 py-8 sm:py-0 relative">
+          {/* Floating elements - hidden on mobile for performance */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
             <motion.div
               className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"
               animate={{ 
@@ -216,11 +218,12 @@ export default function FuturisticFreelancer() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="mb-6"
+              className="mb-4 sm:mb-6"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-300/30 text-sm font-medium">
-                <Sparkles size={16} className="text-purple-300" />
-                Available for IT & Web Development projects
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-300/30 text-xs sm:text-sm font-medium">
+                <Sparkles size={14} className="text-purple-300 sm:w-4 sm:h-4" />
+                <span className="hidden xs:inline">Available for IT & Web Development projects</span>
+                <span className="xs:hidden">IT & Web Development</span>
               </div>
             </motion.div>
             
@@ -228,7 +231,7 @@ export default function FuturisticFreelancer() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-              className="text-5xl sm:text-7xl font-bold leading-tight mb-6"
+              className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 sm:mb-6 px-2"
             >
               <span className="bg-gradient-to-r from-purple-300 via-pink-300 to-cyan-300 bg-clip-text text-transparent">
                 IT Solutions
@@ -241,7 +244,7 @@ export default function FuturisticFreelancer() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-              className="text-lg sm:text-xl opacity-90 mb-8 max-w-2xl mx-auto leading-relaxed"
+              className="text-base sm:text-lg md:text-xl opacity-90 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4"
             >
               I&apos;m a versatile IT professional specializing in web development, with expertise in modern technologies 
               and AI integration. From custom applications to enterprise solutions, I deliver comprehensive IT services.
@@ -251,23 +254,23 @@ export default function FuturisticFreelancer() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              className="flex flex-wrap items-center justify-center gap-4 mb-8"
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 px-4"
             >
               <button
                 onClick={() => onSelect('work')}
-                className={`group inline-flex items-center gap-3 rounded-xl px-6 py-3 ${gradients.glass} hover:${gradients.glassHover} transition-all duration-300 hover:scale-105`}
+                className={`group inline-flex items-center justify-center gap-2 sm:gap-3 rounded-xl px-4 sm:px-6 py-3 w-full sm:w-auto ${gradients.glass} hover:${gradients.glassHover} transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation`}
               >
-                <Briefcase size={18} className="text-purple-300"/>
-                <span className="font-medium">View My Work</span>
-                <ArrowUpRight size={16} className="text-purple-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"/>
+                <Briefcase size={16} className="text-purple-300 sm:w-[18px] sm:h-[18px]"/>
+                <span className="font-medium text-sm sm:text-base">View My Work</span>
+                <ArrowUpRight size={14} className="text-purple-300 sm:w-4 sm:h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"/>
               </button>
               
               <button
                 onClick={() => onSelect('contact')}
-                className={`inline-flex items-center gap-3 rounded-xl px-6 py-3 ${gradients.accent} hover:${gradients.accentHover} text-white font-medium transition-all duration-300 hover:scale-105 shadow-lg`}
+                className={`inline-flex items-center justify-center gap-2 sm:gap-3 rounded-xl px-4 sm:px-6 py-3 w-full sm:w-auto ${gradients.accent} hover:${gradients.accentHover} text-white font-medium transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation shadow-lg`}
               >
-                <Mail size={18} /> 
-                Start a Project
+                <Mail size={16} className="sm:w-[18px] sm:h-[18px]" /> 
+                <span className="text-sm sm:text-base">Start a Project</span>
               </button>
             </motion.div>
             
@@ -296,27 +299,27 @@ export default function FuturisticFreelancer() {
         </section>
 
         {/* Work */}
-        <section ref={refs.work} id="work" className="snap-start min-h-screen px-6 py-28">
+        <section ref={refs.work} id="work" className="snap-start min-h-screen px-4 sm:px-6 py-16 sm:py-28">
           <div className="mx-auto max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="text-center mb-16"
+              className="text-center mb-12 sm:mb-16"
             >
-              <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 px-4">
                 <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
                   Featured Work
                 </span>
               </h2>
-              <p className="text-lg opacity-80 max-w-2xl mx-auto">
+              <p className="text-base sm:text-lg opacity-80 max-w-2xl mx-auto px-4">
                 A showcase of projects that demonstrate my expertise in IT solutions and web development, 
                 from custom applications to enterprise systems.
               </p>
             </motion.div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-4 sm:px-0">
               {[
                 { 
                   title: "AI-Powered CMS", 

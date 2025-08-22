@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   keywords: 'web developer, freelance, React, Next.js, TypeScript, modern websites',
 }
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+}
+
 export default function RootLayout({
   children,
 }: {
