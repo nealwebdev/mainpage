@@ -1,0 +1,384 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Rocket,
+  Briefcase,
+  Wrench,
+  User2,
+  Mail,
+  Menu,
+  Command,
+  ArrowUpRight,
+  Github,
+  Linkedin,
+  Phone,
+  Search,
+} from "lucide-react";
+
+// --- Utility helpers ---
+const useKey = (key, handler) => {
+  useEffect(() => {
+    const onKey = (e) => {
+      // Ignore typing inside inputs
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      const isTyping = tag === "input" || tag === "textarea" || document.activeElement?.getAttribute("contenteditable") === "true";
+      if (isTyping) return;
+      if ((key === "/" && e.key === "/") || (key === "k" && (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)))) {
+        e.preventDefault();
+        handler();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [key, handler]);
+};
+
+const sections = [
+  { id: "home", title: "Home", icon: Rocket },
+  { id: "work", title: "Work", icon: Briefcase },
+  { id: "services", title: "Services", icon: Wrench },
+  { id: "about", title: "About", icon: User2 },
+  { id: "contact", title: "Contact", icon: Mail },
+];
+
+const gradients = {
+  page: "bg-[#070B14] text-white",
+  grid: "[background-image:radial-gradient(transparent_1px,rgba(255,255,255,0.03)_1px)] [background-size:24px_24px]",
+  glow: "after:content-[''] after:absolute after:inset-0 after:bg-[radial-gradient(closest-side,rgba(56,189,248,0.12),transparent)]",
+  glass: "backdrop-blur-xl bg-white/5 border border-white/10",
+};
+
+function useScrollRefs() {
+  const refs = useMemo(() => Object.fromEntries(sections.map(s => [s.id, React.createRef()])), []);
+  const scrollTo = (id) => refs[id]?.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  return { refs, scrollTo };
+}
+
+// --- Radial Wheel Navigation ---
+function RadialNav({ items, onSelect }) {
+  const [open, setOpen] = useState(false);
+  const radius = 110; // px
+
+  const navItems = items.map((item, i) => {
+    const angle = (Math.PI * 1.2 * (i / (items.length - 1 || 1))) - Math.PI * 0.1; // spread arc
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+    return { ...item, x, y };
+  });
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      <motion.div layout className="relative">
+        <AnimatePresence>
+          {open && (
+            navItems.map(({ id, title, icon: Icon, x, y }) => (
+              <motion.button
+                key={id}
+                initial={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                animate={{ opacity: 1, x, y, scale: 1 }}
+                exit={{ opacity: 0, x: 0, y: 0, scale: 0.5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 22 }}
+                onClick={() => { onSelect(id); setOpen(false); }}
+                className={`absolute -translate-x-1/2 -translate-y-1/2 px-3 py-2 rounded-xl ${gradients.glass} hover:bg-white/10 text-sm flex items-center gap-2 shadow-lg`}
+                title={title}
+              >
+                <Icon size={16} />
+                <span className="hidden sm:inline">{title}</span>
+              </motion.button>
+            ))
+          )}
+        </AnimatePresence>
+
+        <motion.button
+          onClick={() => setOpen(!open)}
+          whileTap={{ scale: 0.97 }}
+          className={`relative size-14 sm:size-16 rounded-2xl ${gradients.glass} ${gradients.glow} flex items-center justify-center shadow-2xl`}>
+          <Menu className="absolute opacity-90" />
+          <motion.div
+            animate={{ rotate: open ? 45 : 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 18 }}
+            className="absolute inset-0 rounded-2xl"
+          />
+        </motion.button>
+      </motion.div>
+    </div>
+  );
+}
+
+// --- Command Palette ---
+function CommandPalette({ open, setOpen, items, onSelect }) {
+  const [query, setQuery] = useState("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      setQuery("");
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  }, [open]);
+
+  const filtered = items.filter(i => i.title.toLowerCase().includes(query.toLowerCase()));
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          onClick={() => setOpen(false)}
+        >
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 12, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            className={`mx-auto mt-28 w-[92%] max-w-xl rounded-2xl ${gradients.glass}`} 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-2 px-4 pt-3">
+              <Command size={16} className="opacity-70" />
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Type a section…"
+                className="w-full bg-transparent outline-none py-3 text-base"
+              />
+            </div>
+            <div className="max-h-72 overflow-y-auto py-2">
+              {filtered.map(({ id, title, icon: Icon }) => (
+                <button
+                  key={id}
+                  onClick={() => { onSelect(id); setOpen(false); }}
+                  className="w-full px-4 py-3 flex items-center gap-3 hover:bg-white/5 text-left"
+                >
+                  <Icon size={16} className="opacity-80" />
+                  <span>{title}</span>
+                </button>
+              ))}
+              {filtered.length === 0 && (
+                <div className="px-4 py-6 text-sm opacity-70">No matches. Try Home / Work / Services / About / Contact.</div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// --- Pill CTA ---
+const Pill = ({ children }) => (
+  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs">
+    {children}
+  </span>
+);
+
+// --- Main Page ---
+export default function FuturisticFreelancer() {
+  const { refs, scrollTo } = useScrollRefs();
+  const [paletteOpen, setPaletteOpen] = useState(false);
+
+  useKey("/", () => setPaletteOpen((v) => !v)); // open with /
+  useKey("k", () => setPaletteOpen(true)); // open with ⌘K / Ctrl+K
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash && refs[hash]?.current) refs[hash].current.scrollIntoView({ behavior: "smooth" });
+  }, [refs]);
+
+  const onSelect = (id) => {
+    window.history.replaceState(null, "", `#${id}`);
+    scrollTo(id);
+  };
+
+  return (
+    <div className={`${gradients.page} ${gradients.grid} min-h-screen selection:bg-cyan-400/40`}>
+      {/* Subtle animated gradient backdrop */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10 opacity-70"
+        initial={{ filter: "blur(60px)", opacity: 0.5 }}
+        animate={{ opacity: [0.4, 0.7, 0.5], scale: [1, 1.1, 1], rotate: [0, 10, -6, 0] }}
+        transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
+        style={{
+          background:
+            "radial-gradient(600px 220px at 10% 10%, rgba(59,130,246,0.18), transparent)," +
+            "radial-gradient(420px 180px at 90% 20%, rgba(168,85,247,0.12), transparent)," +
+            "radial-gradient(500px 260px at 60% 80%, rgba(34,197,94,0.12), transparent)",
+        }}
+      />
+
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-40">
+        <div className="mx-auto max-w-6xl px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-0 blur-xl bg-cyan-400/30 rounded-full" />
+              <div className="relative grid place-items-center size-9 rounded-xl bg-white/5 border border-white/10">
+                <Rocket size={16} />
+              </div>
+            </div>
+            <div>
+              <div className="font-semibold tracking-wide">Your Name</div>
+              <div className="text-xs opacity-70 -mt-0.5">Freelance Web Developer</div>
+            </div>
+          </div>
+          <div className="hidden md:flex items-center gap-2 text-xs opacity-80">
+            <Pill><Command size={12}/> Press "/" or ⌘K</Pill>
+            <Pill><Search size={12}/> Type to jump</Pill>
+          </div>
+        </div>
+      </header>
+
+      {/* Radial Alt Navigation */}
+      <RadialNav items={sections} onSelect={onSelect} />
+      <CommandPalette open={paletteOpen} setOpen={setPaletteOpen} items={sections} onSelect={onSelect} />
+
+      {/* Main content */}
+      <main className="snap-y snap-mandatory overflow-y-auto h-screen">
+        {/* Home */}
+        <section ref={refs.home} id="home" className="snap-start min-h-screen grid place-items-center px-6">
+          <div className="max-w-4xl text-center">
+            <motion.h1
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", stiffness: 200, damping: 22 }}
+              className="text-4xl sm:text-6xl font-semibold leading-tight"
+            >
+              Cutting‑edge websites for bold brands.
+            </motion.h1>
+            <p className="mt-4 text-base sm:text-lg opacity-80">
+              I craft fast, accessible, and future‑ready web experiences. Available for freelance projects & collaborations.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <a href="#work" onClick={(e)=>{e.preventDefault(); onSelect('work');}} className={`group inline-flex items-center gap-2 rounded-xl px-4 py-2 ${gradients.glass} hover:bg-white/10`}>
+                <Briefcase size={16}/>
+                <span>See my work</span>
+                <ArrowUpRight size={14} className="opacity-70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"/>
+              </a>
+              <a href="#contact" onClick={(e)=>{e.preventDefault(); onSelect('contact');}} className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-cyan-500/20 border border-cyan-300/20 hover:bg-cyan-500/25">
+                <Mail size={16} /> Contact
+              </a>
+            </div>
+            <div className="mt-8 flex items-center justify-center gap-3 text-xs opacity-70">
+              <Pill>Next‑gen stack</Pill>
+              <Pill>Performance first</Pill>
+              <Pill>Design systems</Pill>
+            </div>
+          </div>
+        </section>
+
+        {/* Work */}
+        <section ref={refs.work} id="work" className="snap-start min-h-screen px-6 py-28">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="text-3xl sm:text-4xl font-semibold">Selected Work</h2>
+            <p className="opacity-80 mt-2">A few recent projects — shipped with care.</p>
+
+            <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {[1,2,3,4,5,6].map((i) => (
+                <motion.a
+                  key={i}
+                  href="#"
+                  whileHover={{ y: -4 }}
+                  className={`group relative overflow-hidden rounded-2xl p-5 ${gradients.glass}`}
+                >
+                  <div className="absolute -right-10 -top-10 size-28 rounded-full bg-cyan-400/10 blur-2xl"/>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-sm opacity-70">Case Study</div>
+                      <div className="mt-1 font-medium">Project {i}</div>
+                    </div>
+                    <ArrowUpRight className="opacity-60 group-hover:opacity-100 transition-opacity" size={16}/>
+                  </div>
+                  <p className="mt-4 text-sm opacity-80 line-clamp-3">
+                    A performant, accessible, and visually striking website built with a modern stack and a component design system.
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2 text-[10px]">
+                    <Pill>Next.js</Pill>
+                    <Pill>TypeScript</Pill>
+                    <Pill>Headless CMS</Pill>
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Services */}
+        <section ref={refs.services} id="services" className="snap-start min-h-screen px-6 py-28">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="text-3xl sm:text-4xl font-semibold">Services</h2>
+            <p className="opacity-80 mt-2">From idea to launch — and beyond.</p>
+            <div className="mt-8 grid md:grid-cols-3 gap-5">
+              {[
+                { title: "Design & Build", desc: "Elegant, responsive websites with component systems and motion." },
+                { title: "Performance & SEO", desc: "Core Web Vitals, accessibility audits, and on‑page SEO." },
+                { title: "Headless & Integrations", desc: "APIs, CMS, e‑commerce, and automation that scale." },
+              ].map((s, idx) => (
+                <div key={idx} className={`rounded-2xl p-6 ${gradients.glass}`}>
+                  <div className="text-lg font-medium">{s.title}</div>
+                  <p className="opacity-80 mt-2 text-sm">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* About */}
+        <section ref={refs.about} id="about" className="snap-start min-h-screen px-6 py-28">
+          <div className="mx-auto max-w-4xl">
+            <h2 className="text-3xl sm:text-4xl font-semibold">About</h2>
+            <div className={`mt-6 rounded-2xl p-6 ${gradients.glass}`}>
+              <p className="opacity-90 leading-relaxed">
+                I’m a freelance web developer focused on building delightful, high‑performant web apps and sites. I collaborate with startups, agencies, and founders — shipping robust frontends, clean APIs, and design systems.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs opacity-80">
+                <Pill>React</Pill>
+                <Pill>Next.js</Pill>
+                <Pill>TypeScript</Pill>
+                <Pill>Node</Pill>
+                <Pill>Tailwind</Pill>
+                <Pill>Drupal / Headless</Pill>
+                <Pill>Odoo</Pill>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact */}
+        <section ref={refs.contact} id="contact" className="snap-start min-h-screen px-6 py-28">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-3xl sm:text-4xl font-semibold">Let’s build something</h2>
+            <p className="opacity-80 mt-2">Tell me about your project. I’ll reply within one business day.</p>
+            <form className={`mt-6 grid gap-3 rounded-2xl p-6 ${gradients.glass}`} onSubmit={(e)=>e.preventDefault()}>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <input placeholder="Your name" className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 outline-none"/>
+                <input placeholder="Email" type="email" className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 outline-none"/>
+              </div>
+              <input placeholder="Company (optional)" className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 outline-none"/>
+              <textarea rows={5} placeholder="Project brief" className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 outline-none"/>
+              <div className="flex flex-wrap items-center gap-3 justify-between">
+                <div className="flex items-center gap-3 opacity-80 text-sm">
+                  <a className="inline-flex items-center gap-1 hover:underline" href="#"><Github size={16}/> GitHub</a>
+                  <a className="inline-flex items-center gap-1 hover:underline" href="#"><Linkedin size={16}/> LinkedIn</a>
+                  <a className="inline-flex items-center gap-1 hover:underline" href="tel:+32000000000"><Phone size={16}/> +32 000 00 00</a>
+                </div>
+                <button className="inline-flex items-center gap-2 rounded-xl px-4 py-2 bg-white/10 border border-white/10 hover:bg-white/15">
+                  <Mail size={16}/> Send
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="px-6 py-10 opacity-70 text-xs text-center">
+        © {new Date().getFullYear()} Your Name. Built with love.
+      </footer>
+    </div>
+  );
+}
