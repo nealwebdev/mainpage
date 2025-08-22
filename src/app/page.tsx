@@ -29,12 +29,15 @@ import {
 
 import { CommandPalette } from "@/components/CommandPalette";
 import { Pill } from "@/components/Pill";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { sections, gradients } from "@/lib/constants";
 import { useKey } from "@/lib/hooks";
+import { useLanguage } from "@/lib/languageContext";
 import { contactFormSchema, type ContactFormData } from "@/lib/validation";
 
 // --- Main Page ---
 export default function FuturisticFreelancer() {
+  const { t } = useLanguage();
   const homeRef = useRef<HTMLElement>(null);
   const workRef = useRef<HTMLElement>(null);
   const servicesRef = useRef<HTMLElement>(null);
@@ -157,20 +160,21 @@ export default function FuturisticFreelancer() {
             </div>
             <div>
               <div className="font-bold tracking-wide text-base sm:text-lg bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
-                Neal Focke
+                {t.header.title}
               </div>
-              <div className="text-xs opacity-80 -mt-0.5 hidden xs:block">Full-Stack IT Solutions Developer</div>
+              <div className="text-xs opacity-80 -mt-0.5 hidden xs:block">{t.header.subtitle}</div>
               <div className="text-xs opacity-80 -mt-0.5 xs:hidden">Full-Stack Developer</div>
             </div>
           </div>
           <div className="flex items-center gap-2 text-xs opacity-90">
+            <LanguageSwitcher />
             <button
               onClick={() => setPaletteOpen(true)}
               className={`inline-flex items-center justify-center gap-1 sm:gap-2 rounded-xl border border-purple-300/30 bg-purple-500/20 px-2 sm:px-3 py-2 text-xs sm:text-sm hover:bg-purple-500/30 transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation ${paletteOpen ? "bg-purple-500/30" : ""}`}
             >
               <Search size={12} className="sm:w-[14px] sm:h-[14px]"/>
-              <span className="hidden sm:inline">Quick Search</span>
-              <span className="sm:hidden">Search</span>
+              <span className="hidden sm:inline">{t.header.quickSearch}</span>
+              <span className="sm:hidden">{t.header.search}</span>
               <kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-white/10 px-1.5 font-mono text-[10px] font-medium opacity-100">
                 <span className="text-xs">⌘</span>K
               </kbd>
@@ -222,8 +226,8 @@ export default function FuturisticFreelancer() {
             >
               <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-300/30 text-xs sm:text-sm font-medium">
                 <Sparkles size={14} className="text-purple-300 sm:w-4 sm:h-4" />
-                <span className="hidden xs:inline">Available for IT & Web Development projects</span>
-                <span className="xs:hidden">IT & Web Development</span>
+                <span className="hidden xs:inline">{t.hero.badge}</span>
+                <span className="xs:hidden">{t.hero.badgeMobile}</span>
               </div>
             </motion.div>
             
@@ -234,10 +238,10 @@ export default function FuturisticFreelancer() {
               className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 sm:mb-6 px-2"
             >
               <span className="bg-gradient-to-r from-purple-300 via-pink-300 to-cyan-300 bg-clip-text text-transparent">
-                IT Solutions
+                {t.hero.title}
               </span>
               <br />
-              <span className="text-white">& Web Development</span>
+              <span className="text-white">& {t.hero.subtitle}</span>
             </motion.h1>
             
             <motion.p
@@ -246,8 +250,7 @@ export default function FuturisticFreelancer() {
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
               className="text-base sm:text-lg md:text-xl opacity-90 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-4"
             >
-              I&apos;m a versatile IT professional specializing in web development, with expertise in modern technologies 
-              and AI integration. From custom applications to enterprise solutions, I deliver comprehensive IT services.
+              {t.hero.description}
             </motion.p>
             
             <motion.div
@@ -261,7 +264,7 @@ export default function FuturisticFreelancer() {
                 className={`group inline-flex items-center justify-center gap-2 sm:gap-3 rounded-xl px-4 sm:px-6 py-3 w-full sm:w-auto ${gradients.glass} hover:${gradients.glassHover} transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation`}
               >
                 <Briefcase size={16} className="text-purple-300 sm:w-[18px] sm:h-[18px]"/>
-                <span className="font-medium text-sm sm:text-base">View My Work</span>
+                <span className="font-medium text-sm sm:text-base">{t.hero.viewWork}</span>
                 <ArrowUpRight size={14} className="text-purple-300 sm:w-4 sm:h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"/>
               </button>
               
@@ -270,7 +273,7 @@ export default function FuturisticFreelancer() {
                 className={`inline-flex items-center justify-center gap-2 sm:gap-3 rounded-xl px-4 sm:px-6 py-3 w-full sm:w-auto ${gradients.accent} hover:${gradients.accentHover} text-white font-medium transition-all duration-300 hover:scale-105 active:scale-95 touch-manipulation shadow-lg`}
               >
                 <Mail size={16} className="sm:w-[18px] sm:h-[18px]" /> 
-                <span className="text-sm sm:text-base">Start a Project</span>
+                <span className="text-sm sm:text-base">{t.hero.startProject}</span>
               </button>
             </motion.div>
             
@@ -310,60 +313,16 @@ export default function FuturisticFreelancer() {
             >
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 px-4">
                 <span className="bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
-                  Featured Work
+                  {t.work.title}
                 </span>
               </h2>
               <p className="text-base sm:text-lg opacity-80 max-w-2xl mx-auto px-4">
-                A showcase of projects that demonstrate my expertise in IT solutions and web development, 
-                from custom applications to enterprise systems.
+                {t.work.description}
               </p>
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 px-4 sm:px-0">
-              {[
-                { 
-                  title: "AI-Powered CMS", 
-                  desc: "Modern content management system with integrated AI content generation and automated workflows for enhanced content management.", 
-                  tags: ["Modern CMS", "OpenAI API", "Custom Development"],
-                  overview: "Built a comprehensive content management system that leverages AI to automate content creation, categorization, and optimization. The system includes intelligent workflows that reduce manual content management by 70%.",
-                  features: ["AI Content Generation", "Automated Workflows", "Smart Categorization", "Performance Analytics"]
-                },
-                { 
-                  title: "Headless Commerce", 
-                  desc: "Modern e-commerce platform with React frontend, featuring real-time inventory and AI-driven recommendations.", 
-                  tags: ["E-commerce", "React", "REST API"],
-                  overview: "Developed a modern e-commerce platform with robust backend and React frontend. Integrated AI-powered product recommendations and real-time inventory management.",
-                  features: ["Real-time Inventory", "AI Recommendations", "Headless Architecture", "Mobile-First Design"]
-                },
-                { 
-                  title: "Multi-API Platform", 
-                  desc: "Complex application integrating multiple third-party APIs for data aggregation and analysis.", 
-                  tags: ["API Integration", "GraphQL", "Data Analytics"],
-                  overview: "Created a sophisticated data aggregation platform that connects to 15+ external APIs, providing unified data access and real-time analytics through GraphQL.",
-                  features: ["Multi-API Integration", "GraphQL Interface", "Real-time Data", "Advanced Analytics"]
-                },
-                { 
-                  title: "AI Chatbot System", 
-                  desc: "Intelligent customer service solution with AI-powered conversation engine and seamless integration.", 
-                  tags: ["AI/ML", "Customer Service", "Custom API"],
-                  overview: "Implemented an intelligent customer service chatbot that handles 80% of customer inquiries automatically, with seamless escalation to human agents.",
-                  features: ["Natural Language Processing", "Smart Escalation", "24/7 Availability", "Multi-language Support"]
-                },
-                { 
-                  title: "Analytics Dashboard", 
-                  desc: "Real-time data visualization platform with advanced user permissions and API connections.", 
-                  tags: ["Data Visualization", "D3.js", "Real-time Analytics"],
-                  overview: "Built a comprehensive analytics dashboard with real-time data visualization, custom reporting, and role-based access control.",
-                  features: ["Real-time Visualization", "Custom Reports", "Role-based Access", "Data Export"]
-                },
-                { 
-                  title: "Automated Workflow", 
-                  desc: "AI-enhanced approval system with smart routing and automated publishing workflows.", 
-                  tags: ["Workflow Automation", "AI Logic", "Process Optimization"],
-                  overview: "Developed an intelligent approval system that automatically routes content through approval workflows based on AI analysis of content quality and relevance.",
-                  features: ["Smart Routing", "Quality Analysis", "Automated Publishing", "Workflow Analytics"]
-                }
-              ].map((project, idx) => (
+              {t.work.projects.map((project, idx) => (
                 <motion.div
                   key={idx}
                   initial={{ opacity: 0, y: 20 }}
@@ -412,32 +371,31 @@ export default function FuturisticFreelancer() {
             >
               <h2 className="text-4xl sm:text-5xl font-bold mb-4">
                 <span className="bg-gradient-to-r from-pink-300 to-cyan-300 bg-clip-text text-transparent">
-                  What I Offer
+                  {t.services.title}
                 </span>
               </h2>
               <p className="text-lg opacity-80 max-w-2xl mx-auto">
-                Comprehensive IT and web development services tailored to your business needs, 
-                from initial concept to ongoing maintenance and optimization.
+                {t.services.description}
               </p>
             </motion.div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 { 
-                  title: "Web Development", 
-                  desc: "Expert web development with modern frameworks, custom applications, and scalable solutions for businesses of all sizes.",
+                  title: t.services.services[0].title, 
+                  desc: t.services.services[0].description,
                   icon: Code,
                   color: "from-purple-500 to-pink-500"
                 },
                 { 
-                  title: "API Integrations", 
-                  desc: "Seamless connections between systems, including REST, GraphQL, and third-party service integrations.",
+                  title: t.services.services[1].title, 
+                  desc: t.services.services[1].description,
                   icon: Wrench,
                   color: "from-pink-500 to-cyan-500"
                 },
                 { 
-                  title: "AI & Automation", 
-                  desc: "Intelligent automation, chatbots, content generation, and machine learning integrations for enhanced user experiences.",
+                  title: t.services.services[2].title, 
+                  desc: t.services.services[2].description,
                   icon: Zap,
                   color: "from-cyan-500 to-blue-500"
                 },
